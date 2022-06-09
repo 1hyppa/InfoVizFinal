@@ -1,4 +1,4 @@
-// Adapted from https://bl.ocks.org/alansmithy/6fd2625d3ba2b6c9ad48
+// Adapted from https://bl.ocks.org/alansmithy/6fd2625d3ba2b6c9ad48 & https://bl.ocks.org/mbostock/4063318
 // layout
 var cellSize = 17;
 var xOffset = 20;
@@ -41,7 +41,7 @@ d3.csv("/data/combined.csv").then(function (data) {
     .attr("y", 20)
     .text("Annual Weather Data from 2014-2015");
 
-    //create an SVG group for each year
+  //create an SVG group for each year
   var cals = svg.selectAll("g")
     .data(yearlyData)
     .enter()
@@ -72,10 +72,9 @@ d3.csv("/data/combined.csv").then(function (data) {
       .text(d);
   })
   updateData("SEA")
+  // event handler to update data when the dropdown changes
   d3.select("#dropdown").on("change", function (event, d) {
-    // recover the option that has been chosen
     const selectedOption = d3.select(this).property("value")
-    // run the updateChart function with this selected option
     updateData(selectedOption)
   })
 
@@ -85,7 +84,6 @@ d3.csv("/data/combined.csv").then(function (data) {
       .attr("id", "dataDays")
       .selectAll(".dataday")
       .data(function (d) {
-        // console.log(d.values.filter(e => e.city == "SEA"))
         return d.values.filter(e => e.city == selectedGroup);
       })
       .enter()
@@ -102,7 +100,7 @@ d3.csv("/data/combined.csv").then(function (data) {
 
     //append a title element to give basic mouseover info
     dataRects.append("title")
-      .text(function (d) { console.log(d); return toolDate(d.date) + ": " + d.value + " degrees" + "\n" + "Record High Temperature: " + d.record_max_temp + "\n"+ "Record Low Temperature: " + d.record_min_temp + "\n" +"Actual Precipitation: " + d.actual_precipitation + "\n" + "Average Precipitation: " + d.average_precipitation; });
+      .text(function (d) { return toolDate(d.date) + ": " + d.value + " degrees" + "\n" + "Record High Temperature: " + d.record_max_temp + "\n" + "Record Low Temperature: " + d.record_min_temp + "\n" + "Actual Precipitation: " + d.actual_precipitation + "\n" + "Average Precipitation: " + d.average_precipitation; });
     //add montly outlines for calendar
     cals.append("g")
       .attr("id", "monthOutlines")
@@ -130,7 +128,6 @@ d3.csv("/data/combined.csv").then(function (data) {
     })
 
     //create centred month labels around the bounding box of each month path
-    //create day labels
     var months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
     var monthLabels = cals.append("g").attr("id", "monthLabels")
     months.forEach(function (d, i) {
@@ -170,7 +167,6 @@ function makeKey() {
     .domain(extent);
 
   var xTicks = keyData.map(d => d.value);
-  console.log(xTicks)
 
   var xAxis = d3.axisBottom(xScale)
     .tickSize(barHeight * 2)
@@ -197,7 +193,7 @@ function makeKey() {
     .select(".domain").remove();
 
   g.append("g").attr("class", "temperature")
-  .append("text").text("Temperature °F").style("font-size", "1rem")
+    .append("text").text("Temperature °F").style("font-size", "1rem")
 
 }
 // Mike Bolstock's function to calculate month shape
