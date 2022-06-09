@@ -25,4 +25,13 @@ text    {
   font-size:1.2em;
 }
 
-.key    {font-size:0.5em;}
+.key    {
+  font-size:0.5em;
+}
+
+#legend svg {
+  display: block;
+  margin: auto;
+}
+
+

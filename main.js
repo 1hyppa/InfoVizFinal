@@ -1,3 +1,4 @@
+// Adapted from https://bl.ocks.org/alansmithy/6fd2625d3ba2b6c9ad48
 // layout
 var cellSize = 17;
 var xOffset = 20;
@@ -20,7 +21,6 @@ function dateFormatter(dateStringParam) {
 }
 
 d3.csv("/data/combined.csv").then(function (data) {
-  console.log(data)
   //parse data
   data.forEach(function (d) {
     d.date = dateFormatter(d.date)
@@ -31,17 +31,17 @@ d3.csv("/data/combined.csv").then(function (data) {
     .key(function (d) { return d.year; })
     .entries(data);
 
-  var svg = d3.select("body").append("svg")
-    .attr("width", "80%")
-    .attr("viewBox", "0 0 " + (xOffset + width) + " 540")
+  var svg = d3.select("#my_dataviz").append("svg")
+    .attr("width", "75%")
+    .attr("viewBox", "0 0 " + (xOffset + width) + " 450")
 
   // append title
   svg.append("text")
     .attr("x", xOffset)
     .attr("y", 20)
-    .text("title");
+    .text("Annual Weather Data from 2014-2015");
 
-  //create an SVG group for each year
+    //create an SVG group for each year
   var cals = svg.selectAll("g")
     .data(yearlyData)
     .enter()
@@ -98,11 +98,11 @@ d3.csv("/data/combined.csv").then(function (data) {
       .attr("height", cellSize)
       .attr("x", function (d) { return xOffset + calX + (d3.timeWeek.count(d3.timeYear(d.date), d.date) * cellSize); })
       .attr("y", function (d) { return calY + (d.date.getDay() * cellSize); })
-      .attr("fill", (d) => cScale(d.value));
+      .attr("fill", (d) => cScale(d.value))
 
     //append a title element to give basic mouseover info
     dataRects.append("title")
-      .text(function (d) { return toolDate(d.date) + ":\n" + d.value + " degrees"; });
+      .text(function (d) { console.log(d); return toolDate(d.date) + ": " + d.value + " degrees" + "\n" + "Record High Temperature: " + d.record_max_temp + "\n"+ "Record Low Temperature: " + d.record_min_temp + "\n" +"Actual Precipitation: " + d.actual_precipitation + "\n" + "Average Precipitation: " + d.average_precipitation; });
     //add montly outlines for calendar
     cals.append("g")
       .attr("id", "monthOutlines")
@@ -163,7 +163,7 @@ function makeKey() {
   var keyWidth = 500;
   var innerWidth = keyWidth - (padding * 2);
   var barHeight = 8;
-  var keyHeight = 50;
+  var keyHeight = 100;
 
   var xScale = d3.scaleLinear()
     .range([0, innerWidth])
@@ -176,8 +176,8 @@ function makeKey() {
     .tickSize(barHeight * 2)
     .tickValues(xTicks);
 
-  var keySvg = d3.select("body").append("svg").attr("width", keyWidth).attr("height", keyHeight);
-  var g = keySvg.append("g").attr("transform", "translate(" + padding + ", 0)");
+  var keySvg = d3.select("#legend").append("svg").attr("width", keyWidth).attr("height", keyHeight);
+  var g = keySvg.append("g").attr("transform", "translate(" + padding + ", 30)");
 
   var defs = keySvg.append("defs");
   var linearGradient = defs.append("linearGradient").attr("id", "myGradient");
@@ -195,6 +195,10 @@ function makeKey() {
   g.append("g")
     .call(xAxis)
     .select(".domain").remove();
+
+  g.append("g").attr("class", "temperature")
+  .append("text").text("Temperature °F").style("font-size", "1rem")
+
 }
 // Mike Bolstock's function to calculate month shape
 function monthPath(t0) {
